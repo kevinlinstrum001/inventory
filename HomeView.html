@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Klinswork Inventory</title>
+
+  <style>
+    :root {
+      --ink: #18323f;
+      --muted: #647783;
+      --line: #d8e2e8;
+      --panel: #ffffff;
+      --page: #f4f7f9;
+      --accent: #0f6f8f;
+      --accent-dark: #0b5269;
+      --accent-soft: #dff1f7;
+      --success: #247a45;
+      --shadow: 0 10px 28px rgba(24, 50, 63, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      padding: 24px;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-nav {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1180px, 100%);
+      margin: 0 auto 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(24, 50, 63, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+
+    .nav-links a.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(15, 111, 143, 0.2);
+    }
+
+    .app {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .hero-panel,
+    .status-panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel {
+      padding: clamp(24px, 5vw, 48px);
+      background:
+        linear-gradient(135deg, rgba(15, 111, 143, 0.08), transparent 58%),
+        var(--panel);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: 1.02;
+    }
+
+    .hero-copy {
+      max-width: 700px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 11px 16px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      text-decoration: none;
+      transition: 0.16s ease;
+    }
+
+    .button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      background: white;
+      color: var(--accent-dark);
+      border-color: var(--line);
+    }
+
+    .button.secondary:hover {
+      background: var(--accent-soft);
+    }
+
+    .status-panel {
+      display: grid;
+      align-content: center;
+      gap: 16px;
+      padding: 24px;
+    }
+
+    .status-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .status-note {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #e5f4ea;
+      color: var(--success);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .section-heading {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .tool-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 230px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .tool-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-weight: 900;
+    }
+
+    .tool-card h2 {
+      margin: 0;
+      font-size: 1.12rem;
+    }
+
+    .tool-card p {
+      margin: 10px 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tool-card .button {
+      margin-top: auto;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .tool-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .app-nav {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="app-nav" aria-label="Klinswork navigation">
+    <a
+      class="nav-brand"
+     href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+      <span class="nav-brand-mark">K</span>
+      <span>Klinswork</span>
+    </a>
+
+    <div class="nav-links">
+      <a
+        class="active"
+        aria-current="page"
+       href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+        Home
+      </a>
+
+      <a href="#" data-view="products" onclick="navigateKlinswork('products'); return false;">Products</a>
+      <a href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">Inventory</a>
+      <a href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">SDS Directory</a>
+    </div>
+  </nav>
+
+  <main class="app">
+    <section class="hero">
+      <div class="hero-panel">
+        <p class="eyebrow">Klinswork Inventory</p>
+        <h1>Supplies, inventory, and safety information in one place.</h1>
+
+        <p class="hero-copy">
+          Open the product directory, check current cart inventory, or find the
+          latest Safety Data Sheet for the chemicals in use.
+        </p>
+
+        <div class="hero-actions">
+          <a
+            class="button"
+           href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">
+            Open Cart Inventory
+          </a>
+
+          <a
+            class="button secondary"
+           href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">
+            Open SDS Directory
+          </a>
+        </div>
+      </div>
+
+      <aside class="status-panel">
+        <div>
+          <div class="status-label">System status</div>
+          <div class="status-value">Inventory tools are online</div>
+        </div>
+
+        <span class="status-pill">Ready</span>
+
+        <div class="status-note">
+          Product records, SDS links, and cart inventory are connected through
+          the shared product IDs in the inventory spreadsheet.
+        </div>
+      </aside>
+    </section>
+
+    <section aria-labelledby="tools-heading">
+      <h2 id="tools-heading" class="section-heading">Open a tool</h2>
+
+      <div class="tool-grid">
+        <article class="tool-card">
+          <div class="tool-icon">P</div>
+          <h2>Product Directory</h2>
+          <p>
+            Browse product records, manufacturer details, package information,
+            and official product links.
+          </p>
+          <a
+            class="button secondary"
+           href="#" data-view="products" onclick="navigateKlinswork('products'); return false;">
+            View Products
+          </a>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-icon">I</div>
+          <h2>Cart Inventory</h2>
+          <p>
+            Review current supplies assigned to Cart 01 and record items as they
+            are used.
+          </p>
+          <a
+            class="button"
+           href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">
+            View Inventory
+          </a>
+        </article>
+
+        <article class="tool-card">
+          <div class="tool-icon">SDS</div>
+          <h2>SDS Directory</h2>
+          <p>
+            Search chemicals, confirm document status, and open the current SDS
+            PDF or official product page.
+          </p>
+          <a
+            class="button secondary"
+           href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">
+            View Safety Documents
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      Personal Klinswork organization tool. Not an official employer-owned system.
+    </p>
+  </main>
+
+  <script>
+    function navigateKlinswork(view, id) {
+      const allowedViews = new Set([
+        'home',
+        'products',
+        'inventory',
+        'product',
+        'sds'
+      ]);
+
+      if (!allowedViews.has(view)) {
+        return;
+      }
+
+      window.top.postMessage(
+        {
+          type: 'klinswork:navigate',
+          view: view,
+          id: id || ''
+        },
+        '*'
+      );
+    }
+  </script>
+
+</body>
+</html>

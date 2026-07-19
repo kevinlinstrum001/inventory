@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Cart Inventory</title>
+
+  <style>
+    :root {
+      --ink: #1f2933;
+      --muted: #52606d;
+      --line: #d8e2e8;
+      --panel: #ffffff;
+      --page: #f4f6f8;
+      --accent: #245b78;
+      --accent-dark: #18465f;
+      --accent-soft: #e4f0f5;
+      --success: #067647;
+      --error: #b42318;
+      --shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      padding: 18px;
+      font-family: Arial, sans-serif;
+      background: var(--page);
+      color: var(--ink);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app-nav {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1180px, 100%);
+      margin: 0 auto 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(24, 50, 63, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+
+    .nav-links a.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(36, 91, 120, 0.22);
+    }
+
+    .page {
+      width: min(720px, 100%);
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.7rem;
+    }
+
+    .subtitle {
+      margin-bottom: 20px;
+      color: var(--muted);
+    }
+
+    .inventory-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .product-name {
+      margin: 0 0 6px;
+      font-size: 1.3rem;
+    }
+
+    .product-details {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .quantity {
+      margin: 16px 0;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .use-button {
+      width: 100%;
+      padding: 13px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .use-button:hover:not(:disabled) {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .use-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 12px;
+    }
+
+    .success {
+      color: var(--success);
+    }
+
+    .error {
+      color: var(--error);
+    }
+
+    .empty {
+      padding: 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .product-image {
+      width: 100%;
+      max-height: 220px;
+      margin-bottom: 14px;
+      object-fit: contain;
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .app-nav {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="app-nav" aria-label="Klinswork navigation">
+    <a
+      class="nav-brand"
+     href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+      <span class="nav-brand-mark">K</span>
+      <span>Klinswork</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+        Home
+      </a>
+
+      <a href="#" data-view="products" onclick="navigateKlinswork('products'); return false;">
+        Products
+      </a>
+
+      <a
+        class="active"
+        aria-current="page"
+       href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">
+        Inventory
+      </a>
+
+      <a href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">
+        SDS Directory
+      </a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <h1>Cart Inventory</h1>
+
+    <div class="subtitle">
+      Current supplies assigned to Cart 01
+    </div>
+
+    <div id="inventoryList" class="inventory-list" aria-live="polite">
+      <div class="empty">Loading inventory…</div>
+    </div>
+  </main>
+
+  <script>
+    const LOCATION_ID = "LOC-CART-01";
+
+    function loadCartInventory() {
+      if (
+        typeof google === "undefined" ||
+        !google.script ||
+        !google.script.run
+      ) {
+        showPageError(
+          new Error("This page must run inside the Apps Script web app.")
+        );
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(renderInventory)
+        .withFailureHandler(showPageError)
+        .getCartInventory(LOCATION_ID);
+    }
+
+    function formatUnit(quantity, unit) {
+      const normalizedUnit = String(unit || "item")
+        .trim()
+        .toLowerCase();
+
+      if (Number(quantity) === 1) {
+        return normalizedUnit;
+      }
+
+      const irregularPlurals = {
+        box: "boxes",
+        case: "cases"
+      };
+
+      if (irregularPlurals[normalizedUnit]) {
+        return irregularPlurals[normalizedUnit];
+      }
+
+      if (normalizedUnit.endsWith("s")) {
+        return normalizedUnit;
+      }
+
+      return `${normalizedUnit}s`;
+    }
+
+    function renderInventory(items) {
+      const list = document.getElementById("inventoryList");
+      list.innerHTML = "";
+
+      if (!Array.isArray(items) || items.length === 0) {
+        list.innerHTML = `
+          <div class="empty">
+            No inventory records were found for this cart.
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(item => {
+        const card = document.createElement("section");
+        card.className = "card";
+        card.dataset.productId = item.productId || "";
+
+        const details = [
+          item.manufacturer,
+          item.containerSize,
+          item.category
+        ].filter(Boolean).join(" · ");
+
+        card.innerHTML = `
+          <img class="product-image" alt="">
+          <h2 class="product-name"></h2>
+
+          <div class="product-details"></div>
+
+          <div class="quantity">
+            <span class="quantity-number"></span>
+            <span class="quantity-unit"></span>
+          </div>
+
+          <button type="button" class="use-button">
+            Use One
+          </button>
+
+          <div class="status" aria-live="polite"></div>
+        `;
+
+        const image = card.querySelector(".product-image");
+
+        if (item.imageUrl) {
+          image.src = item.imageUrl;
+          image.alt = item.productName || "Product image";
+          image.addEventListener("error", () => image.remove());
+        } else {
+          image.remove();
+        }
+
+        card.querySelector(".product-name").textContent =
+          item.productName || "Unnamed product";
+
+        card.querySelector(".product-details").textContent =
+          details;
+
+        const quantity = Number(item.quantity) || 0;
+
+        card.querySelector(".quantity-number").textContent =
+          quantity;
+
+        card.querySelector(".quantity-unit").textContent =
+          ` ${formatUnit(quantity, item.unit)}`;
+
+        const button = card.querySelector(".use-button");
+
+        button.disabled = quantity < 1;
+
+        button.addEventListener("click", () => {
+          confirmUseOne(item, card);
+        });
+
+        list.appendChild(card);
+      });
+    }
+
+    function confirmUseOne(item, card) {
+      const singularUnit = formatUnit(1, item.unit);
+
+      const confirmed = window.confirm(
+        `Are you sure you used one ${singularUnit} of ${item.productName}?`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      const button = card.querySelector(".use-button");
+
+      button.disabled = true;
+      setCardStatus(card, "Updating inventory…", "");
+
+      google.script.run
+        .withSuccessHandler(result => {
+          handleUseSuccess(result, item, card);
+        })
+        .withFailureHandler(error => {
+          handleUseError(error, card);
+        })
+        .useOneProduct(item.productId, LOCATION_ID);
+    }
+
+    function handleUseSuccess(result, item, card) {
+      const newQuantity = Number(result && result.newQuantity) || 0;
+
+      card.querySelector(".quantity-number").textContent =
+        newQuantity;
+
+      card.querySelector(".quantity-unit").textContent =
+        ` ${formatUnit(newQuantity, item.unit)}`;
+
+      card.querySelector(".use-button").disabled =
+        newQuantity < 1;
+
+      setCardStatus(
+        card,
+        "Inventory updated.",
+        "success"
+      );
+    }
+
+    function handleUseError(error, card) {
+      card.querySelector(".use-button").disabled = false;
+
+      const message =
+        error && error.message
+          ? error.message
+          : "Something went wrong.";
+
+      setCardStatus(card, message, "error");
+    }
+
+    function setCardStatus(card, message, className) {
+      const status = card.querySelector(".status");
+
+      status.textContent = message;
+      status.className =
+        className
+          ? `status ${className}`
+          : "status";
+    }
+
+    function showPageError(error) {
+      const list = document.getElementById("inventoryList");
+
+      const message =
+        error && error.message
+          ? error.message
+          : "Unable to load inventory.";
+
+      list.innerHTML = "";
+
+      const errorBox = document.createElement("div");
+      errorBox.className = "empty error";
+      errorBox.textContent = message;
+
+      list.appendChild(errorBox);
+    }
+
+    loadCartInventory();
+  </script>
+
+  <script>
+    function navigateKlinswork(view, id) {
+      const allowedViews = new Set([
+        'home',
+        'products',
+        'inventory',
+        'product',
+        'sds'
+      ]);
+
+      if (!allowedViews.has(view)) {
+        return;
+      }
+
+      window.top.postMessage(
+        {
+          type: 'klinswork:navigate',
+          view: view,
+          id: id || ''
+        },
+        '*'
+      );
+    }
+  </script>
+
+</body>
+</html>

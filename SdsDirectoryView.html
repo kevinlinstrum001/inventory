@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>SDS Directory</title>
+
+  <style>
+    :root {
+      --ink: #18323f;
+      --muted: #647783;
+      --line: #d8e2e8;
+      --panel: #ffffff;
+      --page: #f4f7f9;
+      --accent: #0f6f8f;
+      --accent-dark: #0b5269;
+      --accent-soft: #dff1f7;
+      --success: #247a45;
+      --success-soft: #e5f4ea;
+      --warning: #8a5a00;
+      --warning-soft: #fff4d6;
+      --shadow: 0 10px 28px rgba(24, 50, 63, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body { padding: 24px; }
+
+    button, input, select { font: inherit; }
+    a { color: inherit; }
+
+    .app-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1180px, 100%);
+      margin: 0 auto 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(24, 50, 63, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+
+    .nav-links a.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(15, 111, 143, 0.2);
+    }
+
+    .app {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 15px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.16s ease;
+    }
+
+    .button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      background: white;
+      color: var(--accent-dark);
+      border-color: var(--line);
+    }
+
+    .button.secondary:hover { background: var(--accent-soft); }
+
+    .button[disabled] {
+      opacity: 0.55;
+      cursor: default;
+      transform: none;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 220px 170px;
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 111, 143, 0.13);
+    }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .summary-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .status {
+      padding: 28px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .status.error {
+      color: #8c2c2c;
+      border-color: #e8b9b9;
+      background: #fff7f7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .card-top {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr);
+      gap: 14px;
+      padding: 16px;
+      align-items: start;
+    }
+
+    .product-image,
+    .image-placeholder {
+      width: 74px;
+      height: 74px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8fafb;
+    }
+
+    .product-image { object-fit: contain; }
+
+    .image-placeholder {
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-size: 1.35rem;
+      font-weight: 900;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.3;
+    }
+
+    .manufacturer {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .badge.current {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .badge.outdated {
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    .details {
+      display: grid;
+      gap: 9px;
+      padding: 0 16px 16px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .detail-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .detail-value {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfd;
+    }
+
+    .card-actions .button { flex: 1 1 140px; }
+    .empty { grid-column: 1 / -1; }
+
+    @media (max-width: 760px) {
+      body { padding: 14px; }
+
+      .app-nav {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero { display: block; }
+
+      .hero-actions {
+        justify-content: flex-start;
+        margin-top: 14px;
+      }
+
+      .toolbar { grid-template-columns: 1fr; }
+
+      .detail-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="app-nav" aria-label="Klinswork navigation">
+    <a
+      class="nav-brand"
+     href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+      <span class="nav-brand-mark">K</span>
+      <span>Klinswork</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">Home</a>
+      <a href="#" data-view="products" onclick="navigateKlinswork('products'); return false;">Products</a>
+      <a href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">Inventory</a>
+
+      <a
+        class="active"
+        aria-current="page"
+       href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">
+        SDS Directory
+      </a>
+    </div>
+  </nav>
+
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Klinswork Inventory</p>
+        <h1>Safety Data Sheet Directory</h1>
+        <p class="subtitle">
+          Search products and open the current SDS document associated with each inventory item.
+        </p>
+      </div>
+
+      <div class="hero-actions">
+        <button class="button secondary" type="button" onclick="reloadDirectory()">
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <section class="toolbar" aria-label="SDS directory filters">
+      <div class="field">
+        <label for="searchInput">Search</label>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Product, manufacturer, code, category…"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="field">
+        <label for="manufacturerFilter">Manufacturer</label>
+        <select id="manufacturerFilter">
+          <option value="">All manufacturers</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="statusFilter">Document status</label>
+        <select id="statusFilter">
+          <option value="">All documents</option>
+          <option value="current">Current only</option>
+          <option value="not-current">Not current</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="summary" id="summary"></div>
+
+    <section id="statusMessage" class="status">
+      Loading SDS directory…
+    </section>
+
+    <section id="directoryGrid" class="grid" hidden></section>
+  </main>
+
+  <script>
+    let directoryRecords = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("searchInput").addEventListener("input", renderDirectory);
+      document.getElementById("manufacturerFilter").addEventListener("change", renderDirectory);
+      document.getElementById("statusFilter").addEventListener("change", renderDirectory);
+      reloadDirectory();
+    });
+
+    function reloadDirectory() {
+      showStatus("Loading SDS directory…");
+
+      if (
+        typeof google === "undefined" ||
+        !google.script ||
+        !google.script.run
+      ) {
+        showError("This page must run inside the Apps Script web app.");
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(loadDirectory)
+        .withFailureHandler(handleLoadError)
+        .getSdsDirectoryData();
+    }
+
+    function loadDirectory(result) {
+      directoryRecords = (Array.isArray(result) ? result : []).map(normalizeRecord);
+      populateManufacturerFilter();
+      renderDirectory();
+    }
+
+    function normalizeRecord(record) {
+      return {
+        product_id: text(record.product_id),
+        product_name: text(record.product_name),
+        manufacturer: text(record.manufacturer),
+        manufacturer_product_code: text(record.manufacturer_product_code),
+        category: text(record.category),
+        container_size: text(record.container_size),
+        inventory_unit: text(record.inventory_unit),
+        product_image_url: text(record.product_image_url),
+        manufacturer_page_url: text(record.manufacturer_page_url),
+        active: toBoolean(record.active),
+        sds_id: text(record.sds_id),
+        revision_date: formatDate(record.revision_date),
+        document_url: text(record.document_url),
+        source: text(record.source),
+        date_verified: formatDate(record.date_verified),
+        current: toBoolean(record.current)
+      };
+    }
+
+    function populateManufacturerFilter() {
+      const select = document.getElementById("manufacturerFilter");
+      const previous = select.value;
+
+      const manufacturers = [...new Set(
+        directoryRecords
+          .map(record => record.manufacturer)
+          .filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b));
+
+      select.innerHTML = '<option value="">All manufacturers</option>';
+
+      manufacturers.forEach(manufacturer => {
+        const option = document.createElement("option");
+        option.value = manufacturer;
+        option.textContent = manufacturer;
+        select.appendChild(option);
+      });
+
+      if (manufacturers.includes(previous)) {
+        select.value = previous;
+      }
+    }
+
+    function renderDirectory() {
+      const search = document.getElementById("searchInput").value.trim().toLowerCase();
+      const manufacturer = document.getElementById("manufacturerFilter").value;
+      const status = document.getElementById("statusFilter").value;
+
+      const filtered = directoryRecords.filter(record => {
+        if (!record.document_url) return false;
+
+        const searchable = [
+          record.product_id,
+          record.product_name,
+          record.manufacturer,
+          record.manufacturer_product_code,
+          record.category,
+          record.container_size,
+          record.sds_id,
+          record.source
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = !search || searchable.includes(search);
+        const matchesManufacturer = !manufacturer || record.manufacturer === manufacturer;
+
+        let matchesStatus = true;
+        if (status === "current") matchesStatus = record.current;
+        if (status === "not-current") matchesStatus = !record.current;
+
+        return matchesSearch && matchesManufacturer && matchesStatus;
+      });
+
+      updateSummary(filtered);
+
+      const statusMessage = document.getElementById("statusMessage");
+      const grid = document.getElementById("directoryGrid");
+
+      statusMessage.hidden = true;
+      grid.hidden = false;
+      grid.innerHTML = "";
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="status empty">
+            No SDS records match the current filters.
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(record => grid.appendChild(buildCard(record)));
+    }
+
+    function buildCard(record) {
+      const article = document.createElement("article");
+      article.className = "card";
+
+      const imageMarkup = record.product_image_url
+        ? `
+          <img
+            class="product-image"
+            src="${escapeAttribute(record.product_image_url)}"
+            alt="${escapeAttribute(record.product_name)}"
+            onerror="this.replaceWith(createImagePlaceholder())"
+          >
+        `
+        : `<div class="image-placeholder" aria-hidden="true">SDS</div>`;
+
+      const statusClass = record.current ? "current" : "outdated";
+      const statusText = record.current ? "Current" : "Review needed";
+
+      article.innerHTML = `
+        <div class="card-top">
+          <div>${imageMarkup}</div>
+
+          <div>
+            <h2>${escapeHtml(record.product_name || "Unnamed product")}</h2>
+            <p class="manufacturer">
+              ${escapeHtml(record.manufacturer || "Manufacturer not listed")}
+            </p>
+
+            <div class="badges">
+              ${record.category
+                ? `<span class="badge">${escapeHtml(record.category)}</span>`
+                : ""
+              }
+
+              <span class="badge ${statusClass}">
+                ${statusText}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details">
+          ${detailRow("Product ID", record.product_id)}
+          ${detailRow("Product code", record.manufacturer_product_code)}
+          ${detailRow("Container", joinParts(record.container_size, record.inventory_unit))}
+          ${detailRow("SDS ID", record.sds_id)}
+          ${detailRow("Revision", record.revision_date)}
+          ${detailRow("Source", record.source)}
+          ${detailRow("Verified", record.date_verified)}
+        </div>
+
+        <div class="card-actions">
+          ${
+            record.document_url
+              ? `<a
+                   class="button"
+                   href="${escapeAttribute(record.document_url)}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                 >Open SDS PDF</a>`
+              : `<button class="button" type="button" disabled>No SDS link</button>`
+          }
+
+          ${
+            record.manufacturer_page_url
+              ? `<a
+                   class="button secondary"
+                   href="${escapeAttribute(record.manufacturer_page_url)}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                 >Product page</a>`
+              : ""
+          }
+        </div>
+      `;
+
+      return article;
+    }
+
+    function detailRow(label, value) {
+      return `
+        <div class="detail-row">
+          <div class="detail-label">${escapeHtml(label)}</div>
+          <div class="detail-value">${escapeHtml(value || "—")}</div>
+        </div>
+      `;
+    }
+
+    function updateSummary(filtered) {
+      const currentCount = filtered.filter(record => record.current).length;
+      const totalWithLinks = filtered.filter(record => record.document_url).length;
+
+      document.getElementById("summary").innerHTML = `
+        <span class="summary-chip">${filtered.length} product${filtered.length === 1 ? "" : "s"}</span>
+        <span class="summary-chip">${currentCount} current SDS</span>
+        <span class="summary-chip">${totalWithLinks} PDF link${totalWithLinks === 1 ? "" : "s"}</span>
+      `;
+    }
+
+    function showStatus(message) {
+      const statusMessage = document.getElementById("statusMessage");
+      const grid = document.getElementById("directoryGrid");
+
+      statusMessage.className = "status";
+      statusMessage.textContent = message;
+      statusMessage.hidden = false;
+      grid.hidden = true;
+    }
+
+    function showError(message) {
+      const statusMessage = document.getElementById("statusMessage");
+      const grid = document.getElementById("directoryGrid");
+
+      statusMessage.className = "status error";
+      statusMessage.textContent = message;
+      statusMessage.hidden = false;
+      grid.hidden = true;
+    }
+
+    function handleLoadError(error) {
+      showError(
+        error && error.message
+          ? error.message
+          : "The SDS directory could not be loaded."
+      );
+      console.error(error);
+    }
+
+    function createImagePlaceholder() {
+      const placeholder = document.createElement("div");
+      placeholder.className = "image-placeholder";
+      placeholder.setAttribute("aria-hidden", "true");
+      placeholder.textContent = "SDS";
+      return placeholder;
+    }
+
+    function text(value) {
+      return value === null || value === undefined
+        ? ""
+        : String(value).trim();
+    }
+
+    function toBoolean(value) {
+      if (typeof value === "boolean") return value;
+      return ["true", "yes", "1"].includes(text(value).toLowerCase());
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+
+      const date = value instanceof Date ? value : new Date(value);
+
+      if (Number.isNaN(date.getTime())) return text(value);
+
+      return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+      ].join("-");
+    }
+
+    function joinParts(...parts) {
+      return parts.filter(Boolean).join(" ");
+    }
+
+    function escapeHtml(value) {
+      return text(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value);
+    }
+  </script>
+
+  <script>
+    function navigateKlinswork(view, id) {
+      const allowedViews = new Set([
+        'home',
+        'products',
+        'inventory',
+        'product',
+        'sds'
+      ]);
+
+      if (!allowedViews.has(view)) {
+        return;
+      }
+
+      window.top.postMessage(
+        {
+          type: 'klinswork:navigate',
+          view: view,
+          id: id || ''
+        },
+        '*'
+      );
+    }
+  </script>
+
+</body>
+</html>

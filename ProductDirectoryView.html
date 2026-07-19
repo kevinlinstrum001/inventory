@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_self">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Product Directory</title>
+
+  <style>
+    :root {
+      --ink: #18323f;
+      --muted: #647783;
+      --line: #d8e2e8;
+      --panel: #ffffff;
+      --page: #f4f7f9;
+      --accent: #0f6f8f;
+      --accent-dark: #0b5269;
+      --accent-soft: #dff1f7;
+      --success: #247a45;
+      --shadow: 0 10px 28px rgba(24, 50, 63, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      padding: 24px;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-nav {
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      width: min(1180px, 100%);
+      margin: 0 auto 22px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(24, 50, 63, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+    }
+
+    .nav-links a.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(15, 111, 143, 0.2);
+    }
+
+    .app {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) 220px;
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(15, 111, 143, 0.13);
+    }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .summary-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 260px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .product-card-top {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 14px;
+      padding: 16px;
+      align-items: start;
+    }
+
+    .product-mark {
+      display: grid;
+      place-items: center;
+      width: 72px;
+      height: 72px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(135deg, #edf4f7, #f9fbfc);
+      color: var(--accent);
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .product-card h2 {
+      margin: 0;
+      font-size: 1.08rem;
+      line-height: 1.3;
+    }
+
+    .manufacturer {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .badge.active {
+      background: #e5f4ea;
+      color: var(--success);
+    }
+
+    .details {
+      display: grid;
+      gap: 9px;
+      padding: 0 16px 16px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 105px minmax(0, 1fr);
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .detail-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--line);
+      background: #fbfcfd;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 15px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      text-decoration: none;
+      transition: 0.16s ease;
+    }
+
+    .button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      background: white;
+      color: var(--accent-dark);
+      border-color: var(--line);
+    }
+
+    .button.secondary:hover {
+      background: var(--accent-soft);
+    }
+
+    .card-actions .button {
+      flex: 1 1 130px;
+    }
+
+    .coming-soon {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      background: white;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .app-nav {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero {
+        display: block;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="app-nav" aria-label="Klinswork navigation">
+    <a
+      class="nav-brand"
+     href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+      <span class="nav-brand-mark">K</span>
+      <span>Klinswork</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#" data-view="home" onclick="navigateKlinswork('home'); return false;">
+        Home
+      </a>
+
+      <a
+        class="active"
+        aria-current="page"
+       href="#" data-view="products" onclick="navigateKlinswork('products'); return false;">
+        Products
+      </a>
+
+      <a href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">
+        Inventory
+      </a>
+
+      <a href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">
+        SDS Directory
+      </a>
+    </div>
+  </nav>
+
+  <main class="app">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Klinswork Inventory</p>
+        <h1>Product Directory</h1>
+        <p class="subtitle">
+          Browse the supplies used in the inventory system and open their product,
+          inventory, or safety information.
+        </p>
+      </div>
+    </header>
+
+    <section class="toolbar" aria-label="Product directory filters">
+      <div class="field">
+        <label for="productSearch">Search</label>
+        <input
+          id="productSearch"
+          type="search"
+          placeholder="Product, manufacturer, code, category…"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="field">
+        <label for="categoryFilter">Category</label>
+        <select id="categoryFilter">
+          <option value="">All categories</option>
+          <option value="Cleaner">Cleaner</option>
+          <option value="Disinfectant">Disinfectant</option>
+          <option value="Paper">Paper</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="summary">
+      <span class="summary-chip">Product directory shell</span>
+      <span class="summary-chip">Ready for live sheet data</span>
+    </div>
+
+    <section class="product-grid">
+      <article class="product-card">
+        <div class="product-card-top">
+          <div class="product-mark">CHEM</div>
+
+          <div>
+            <h2>Cleaning Chemicals</h2>
+            <p class="manufacturer">Diversey, Clorox, Tough Guy</p>
+
+            <div class="badges">
+              <span class="badge">Chemical</span>
+              <span class="badge active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail-row">
+            <div class="detail-label">Includes</div>
+            <div>Oxivir, Crew, BreakDown, Prominence, and other cleaners</div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">References</div>
+            <div>Product pages, SDS records, package information</div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a
+            class="button"
+           href="#" data-view="sds" onclick="navigateKlinswork('sds'); return false;">
+            Open SDS Directory
+          </a>
+        </div>
+      </article>
+
+      <article class="product-card">
+        <div class="product-card-top">
+          <div class="product-mark">INV</div>
+
+          <div>
+            <h2>Cart Supplies</h2>
+            <p class="manufacturer">Current operational inventory</p>
+
+            <div class="badges">
+              <span class="badge">Inventory</span>
+              <span class="badge active">Connected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail-row">
+            <div class="detail-label">Location</div>
+            <div>Cart 01</div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Purpose</div>
+            <div>Review quantities and record product use</div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a
+            class="button"
+           href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">
+            Open Inventory
+          </a>
+        </div>
+      </article>
+
+      <article class="product-card">
+        <div class="product-card-top">
+          <div class="product-mark">PAPER</div>
+
+          <div>
+            <h2>Paper Products</h2>
+            <p class="manufacturer">Bright Solutions and Genuine Joe</p>
+
+            <div class="badges">
+              <span class="badge">Paper</span>
+              <span class="badge active">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail-row">
+            <div class="detail-label">Includes</div>
+            <div>Toilet paper rolls and C-fold tissue</div>
+          </div>
+
+          <div class="detail-row">
+            <div class="detail-label">Tracking</div>
+            <div>Product code, package size, and inventory unit</div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <a
+            class="button secondary"
+           href="#" data-view="inventory" onclick="navigateKlinswork('inventory'); return false;">
+            View Inventory
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <div class="coming-soon">
+      The next version can load every product directly from the Products sheet and
+      open an individual Product View for each record.
+    </div>
+  </main>
+
+  <script>
+    function navigateKlinswork(view, id) {
+      const allowedViews = new Set([
+        'home',
+        'products',
+        'inventory',
+        'product',
+        'sds'
+      ]);
+
+      if (!allowedViews.has(view)) {
+        return;
+      }
+
+      window.top.postMessage(
+        {
+          type: 'klinswork:navigate',
+          view: view,
+          id: id || ''
+        },
+        '*'
+      );
+    }
+  </script>
+
+</body>
+</html>
